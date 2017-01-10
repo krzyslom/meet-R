@@ -1,0 +1,162 @@
+---
+title: "RSelenium jako alternatywa dla rvest podczas web-srcapingu"
+author: "<br>Krzysztof Słomczyński<br><small><a href='http://stackoverflow.com/users/6295945/krzyslom' target='_blank'><i class='fa fa-stack-overflow'></i></a>&nbsp;&nbsp;<a href='http://github.com/krzyslom' target='_blank'><i class='fa fa-github'></i></a>&nbsp;&nbsp;<a href='mailto:krzysztofslomczynski@gmail.com'><i class='fa fa-envelope-o'></i></a></small><br>"
+date: "<small>12 stycznia 2016</small>"
+output:
+  revealjs::revealjs_presentation:
+    theme: night
+    code_height: 2
+    css: small_code.css
+    reveal_options:
+      slideNumber: true
+---
+
+```{r setup, include = FALSE}
+htmltools::tagList(rmarkdown::html_dependency_font_awesome())
+library(knitr)
+opts_chunk$set(
+  eval = FALSE,
+  echo = FALSE,
+  collapse = TRUE,
+  warning = FALSE,
+  error = FALSE,
+  mesage = FALSE,
+  comment = "",
+  tidy.opts = list(
+    keep.blank.line = TRUE
+  )
+)
+```
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(readr)
+library(stringi)
+library(htmltools)
+```
+
+## Scrapowanie danych
+
+- projekt [MI^2 pracuj.pl](http://mi2.mini.pw.edu.pl:3838/pracuj/ml/)
+- [analiza](http://github.com/krzyslom/tuatara) rynku nieruchomości na podstawie danych zebranych z gumtree.pl
+
+## Standardowy schemat portalu
+
+- wolny dostęp do danych (zakładanie konta na portalu jest zbędne)
+- brak jawnych zabezpieczeń przed automatami (captcha)
+- kolejne strony z wynikami wyszukiwania w adresie url
+- np. [pracuj.pl](http://pracuj.pl), [gumtree.pl](http://gumtree.pl) czy [allegro.pl](http://allegro.pl)
+
+## Pakiet rvest
+
+- autor i maintainer - Chief Scientist w RStudio - [Hadley Wickham](http://hadley.nz/)
+- zainspirowany pakietem [Beautiful Soup](https://www.crummy.com/software/BeautifulSoup/) z języka Python
+- prosty w instalacji i obsłudze
+- 28 funkcji pozwalających pobierać kod html i wyłuskiwać z niego interesujące fragmenty
+
+## Zabezpieczone portale
+
+- niezbędne założenie konta i zalogowanie się w celu przeglądania zawartości
+- zabezpieczenia w postaci captcha
+- interaktywne (rozwijane) menu
+- np. [glassdoor.com](http://glassdoor.com) czy porale społecznościowe
+
+## Problem z logowaniem
+
+<img src="glassdoor_panel.png">
+
+## Problem z logowaniem
+
+<img src="glassdoor_signup.png">
+<img src="glassdoor_add.png">
+
+## Recepta
+
+- uruchomienie sesji przeglądarki przez Selenium Server
+- nawiązanie sesji przez RSelenium
+- dla wygody - zdalny pulpit (np. Vinagre)
+
+## Instalacja (niezbędnych) narzędzi
+
+- [Docker](http://docker.com) - narzędzie do tworzenia gotowych, skonfigurowanych kontenerów/wirtualnych maszyn ([czym jest Docker i dlaczego go używać?](http://r-addict.com/2016/05/13/Docker-Motivation.html))
+- [obraz](http://hub.docker.com/r/selenium/standalone-firefox-debug/) Docker z zainstalowanym Selenium Server
+- [Vinagre](http://wiki.gnome.org/Apps/Vinagre) - program do uruchamiania zdalnego pulpitu
+- Selenium wspiera Firefox, IE, Safari, Opera, Chrome niezależnie od systemu operacyjnego
+
+## Czym jest Selenium?
+
+Zestaw narzędzi do międzyplatformowego zautomatyzowanego testowania aplikacji internetowych i czynności związanych z przeglądarkami.
+
+W skład pakietu wchodzą:
+
+- Selenium IDE (Integrated Development Environment)
+- Selenium Remote Control
+- Selenium WebDriver
+- Selenium Grid
+
+## Jak to działa?
+
+- RSelenium łączy się z Selenium WebDriver na Selenium Server chodzącym w Docker
+- WebDriver łączy się z przeglądarką internetową
+- przeglądarka łączy się ze stroną
+
+Uruchomienie Docker
+
+`sudo docker run -d -p 5901:5900 \`
+
+`-p 127.0.0.1:4445:4444 \`
+
+`--name selenium_server \`
+
+`selenium/standalone-firefox-debug:2.53.1`
+
+## Programowanie obiektowe {.smallCode}
+
+```{r eval = TRUE, echo = TRUE}
+library(RSelenium)
+remDr <- RSelenium::remoteDriver(port = 4445L)
+
+# Obiekt bazowy?
+!base::is.object(remDr)
+
+# Klasy S3?
+!base::isS4(remDr)
+
+# Klasy S4?
+!is(remDr, "refClass")
+
+# Uwaga!
+isS4(remDr)
+pryr::otype(remDr)
+
+# Metoda konkretnej klasy użyta na danym obiekcie
+remDr$open(silent = TRUE)
+```
+
+- metody należą do obiektów, nie do funkcji
+- obiekty sa mutowalne
+- wchodzimy w terytorium Java
+
+## RSelenium - większe możliwości
+
+- wklejanie tekstu (login, hasło) w odpowiednie pola
+- klikanie przycisków od logowania czy rozwijanych menu
+- w razie wątpliwości - podświetlenie interesującego nas obiektu
+
+<img src="meetup_highlightbutton.png">
+
+## Captcha
+
+- możliwa jednorazowa operacja
+- możliwość spowolnienia algorytmu za pomocą base::Sys.sleep()
+- zaimplementowanie prostej sieci neuronowej rozpoznającej tekst
+
+<img src="captcha.jpg">
+<img src="captcha.gif">
+
+## Co dalej?
+
+<small>Dzięki RSelenium w bardzo prosty sposób udało się wyłuskać dane z portalu Meetup i na ich podstawie stworzyć grafikę z konferencjami R które już się odbyły oraz z tymi nadciągającymi.</small>
+
+<img src="conferences.png" height="480">
