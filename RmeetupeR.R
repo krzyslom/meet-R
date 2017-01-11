@@ -2,7 +2,7 @@
 # then open Vinagre at 127.0.0.1:5901 for VNC method, password is "secret"
 
 # If not on board - install necessary packages
-packages <- c("RSelenium", "stringi")
+packages <- c("RSelenium", "stringi", "ggplot2", "ggthemes")
 to_install <- packages[which(!(packages %in% rownames(installed.packages())))]
 invisible(sapply(to_install, install.packages))
 
@@ -41,7 +41,7 @@ whyR_meetup <- function(group_url = "https://www.meetup.com/Spotkania-Entuzjasto
                                        users = as.numeric(as.character(users)),
                                        stringsAsFactors = FALSE)
   }
-  do.call(rbind,meetup_info)
+  do.call(rbind, meetup_info)
 }
 
 Warsaw <- whyR_meetup()
@@ -83,7 +83,6 @@ whyR$date <- as.Date(whyR$date, "%b %d, %Y")
 
 levels(whyR$city) <- paste(levels(whyR$city), " (",table(whyR$city), ")", sep = "")
 
-
 library(ggplot2)
 library(ggthemes)
 
@@ -114,6 +113,5 @@ ggplot(whyR, aes(x = date, y = users, col = city)) +
   annotate("text", x = c(as.Date("2017-09-20")), colour = "#FFFFFF", size = 6,
                           y = c(150), label = c("whyr.pl")) 
 dev.off()
-  
 
 Sys.setlocale("LC_TIME", lct)

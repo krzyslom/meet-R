@@ -1,11 +1,10 @@
 ---
-title: "RSelenium jako alternatywa dla rvest podczas web-srcapingu"
+title: "<br><br>RSelenium jako alternatywa dla rvest podczas web-srcapingu"
 author: "<br>Krzysztof Słomczyński<br><small><a href='http://stackoverflow.com/users/6295945/krzyslom' target='_blank'><i class='fa fa-stack-overflow'></i></a>&nbsp;&nbsp;<a href='http://github.com/krzyslom' target='_blank'><i class='fa fa-github'></i></a>&nbsp;&nbsp;<a href='mailto:krzysztofslomczynski@gmail.com'><i class='fa fa-envelope-o'></i></a></small><br>"
 date: "<small>12 stycznia 2016</small>"
 output:
   revealjs::revealjs_presentation:
     theme: night
-    code_height: 2
     css: small_code.css
     reveal_options:
       slideNumber: true
@@ -36,31 +35,31 @@ library(stringi)
 library(htmltools)
 ```
 
-## Scrapowanie danych
+## <br><br>Scrapowanie danych
 
-- projekt [MI^2 pracuj.pl](http://mi2.mini.pw.edu.pl:3838/pracuj/ml/)
+- projekt [MI^2 pracuj.pl](http://smarterpoland.pl/index.php/2017/01/is-it-a-job-offer-for-a-data-scientist/)
 - [analiza](http://github.com/krzyslom/tuatara) rynku nieruchomości na podstawie danych zebranych z gumtree.pl
 
-## Standardowy schemat portalu
+## <br><br>Standardowy schemat portalu
 
 - wolny dostęp do danych (zakładanie konta na portalu jest zbędne)
 - brak jawnych zabezpieczeń przed automatami (captcha)
 - kolejne strony z wynikami wyszukiwania w adresie url
 - np. [pracuj.pl](http://pracuj.pl), [gumtree.pl](http://gumtree.pl) czy [allegro.pl](http://allegro.pl)
 
-## Pakiet rvest
+## <br><br>Pakiet rvest
 
 - autor i maintainer - Chief Scientist w RStudio - [Hadley Wickham](http://hadley.nz/)
 - zainspirowany pakietem [Beautiful Soup](https://www.crummy.com/software/BeautifulSoup/) z języka Python
 - prosty w instalacji i obsłudze
 - 28 funkcji pozwalających pobierać kod html i wyłuskiwać z niego interesujące fragmenty
 
-## Zabezpieczone portale
+## <br><br>Zabezpieczone portale
 
 - niezbędne założenie konta i zalogowanie się w celu przeglądania zawartości
 - zabezpieczenia w postaci captcha
 - interaktywne (rozwijane) menu
-- np. [glassdoor.com](http://glassdoor.com) czy porale społecznościowe
+- np. [glassdoor.com](http://glassdoor.com) czy portale społecznościowe
 
 ## Problem z logowaniem
 
@@ -71,20 +70,20 @@ library(htmltools)
 <img src="glassdoor_signup.png">
 <img src="glassdoor_add.png">
 
-## Recepta
+## <br><br>Recepta
 
 - uruchomienie sesji przeglądarki przez Selenium Server
 - nawiązanie sesji przez RSelenium
 - dla wygody - zdalny pulpit (np. Vinagre)
 
-## Instalacja (niezbędnych) narzędzi
+## <br><br>Instalacja (niezbędnych) narzędzi
 
-- [Docker](http://docker.com) - narzędzie do tworzenia gotowych, skonfigurowanych kontenerów/wirtualnych maszyn ([czym jest Docker i dlaczego go używać?](http://r-addict.com/2016/05/13/Docker-Motivation.html))
+- [Docker](http://docker.com) - narzędzie do tworzenia gotowych, skonfigurowanych kontenerów - lżejszych od wirtualnych maszyn ([czym jest Docker i dlaczego go używać?](http://r-addict.com/eRka10/#/))
 - [obraz](http://hub.docker.com/r/selenium/standalone-firefox-debug/) Docker z zainstalowanym Selenium Server
 - [Vinagre](http://wiki.gnome.org/Apps/Vinagre) - program do uruchamiania zdalnego pulpitu
 - Selenium wspiera Firefox, IE, Safari, Opera, Chrome niezależnie od systemu operacyjnego
 
-## Czym jest Selenium?
+## <br>Czym jest Selenium?
 
 Zestaw narzędzi do międzyplatformowego zautomatyzowanego testowania aplikacji internetowych i czynności związanych z przeglądarkami.
 
@@ -97,19 +96,16 @@ W skład pakietu wchodzą:
 
 ## Jak to działa?
 
-- RSelenium łączy się z Selenium WebDriver na Selenium Server chodzącym w Docker
-- WebDriver łączy się z przeglądarką internetową
-- przeglądarka łączy się ze stroną
+<img src="connections.png" height="300">
 
-Uruchomienie Docker
+Uruchomienie kontenera Docker
 
-`sudo docker run -d -p 5901:5900 \`
-
-`-p 127.0.0.1:4445:4444 \`
-
-`--name selenium_server \`
-
-`selenium/standalone-firefox-debug:2.53.1`
+```{bash echo = TRUE}
+sudo docker run -d -p 5901:5900 \
+-p 127.0.0.1:4445:4444 \
+--name selenium_server \
+selenium/standalone-firefox-debug:2.53.1
+```
 
 ## Programowanie obiektowe {.smallCode}
 
@@ -124,10 +120,10 @@ remDr <- RSelenium::remoteDriver(port = 4445L)
 !base::isS4(remDr)
 
 # Klasy S4?
-!is(remDr, "refClass")
+base::isS4(remDr)
 
-# Uwaga!
-isS4(remDr)
+# Klasy referencyjnej?
+is(remDr, "refClass")
 pryr::otype(remDr)
 
 # Metoda konkretnej klasy użyta na danym obiekcie
@@ -138,7 +134,28 @@ remDr$open(silent = TRUE)
 - obiekty sa mutowalne
 - wchodzimy w terytorium Java
 
-## RSelenium - większe możliwości
+## <br>Podstawowe operacje
+
+```{r echo = TRUE}
+# Przejście do strony, powrót na poprzednią, odświeżenie, pozyskanie adresu
+remDr$navigate(url)
+remDr$goBack()
+remDr$goForward()
+remDr$refresh()
+remDr$getCurrentUrl()
+
+# Działania na DOM (Document Object Model)
+webElem <- remDr$findElement(using = "name|id|class|css|tag|xpath", value = "")
+
+# Przesyłanie informacji
+webElem$sendKeysToElement(list("", key = "enter"))
+webElem$clickElement()
+
+# Podświetlanie elementu
+webElem$highlightElement()
+```
+
+## RSelenium w akcji
 
 - wklejanie tekstu (login, hasło) w odpowiednie pola
 - klikanie przycisków od logowania czy rozwijanych menu
@@ -146,7 +163,7 @@ remDr$open(silent = TRUE)
 
 <img src="meetup_highlightbutton.png">
 
-## Captcha
+## <br>Captcha
 
 - możliwa jednorazowa operacja
 - możliwość spowolnienia algorytmu za pomocą base::Sys.sleep()
