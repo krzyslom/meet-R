@@ -15,7 +15,7 @@ htmltools::tagList(rmarkdown::html_dependency_font_awesome())
 library(knitr)
 opts_chunk$set(
   eval = FALSE,
-  echo = FALSE,
+  echo = TRUE,
   collapse = TRUE,
   warning = FALSE,
   error = FALSE,
@@ -25,14 +25,6 @@ opts_chunk$set(
     keep.blank.line = TRUE
   )
 )
-```
-
-```{r}
-library(dplyr)
-library(ggplot2)
-library(readr)
-library(stringi)
-library(htmltools)
 ```
 
 ## <br><br>Scrapowanie danych
@@ -59,7 +51,7 @@ library(htmltools)
 - niezbędne założenie konta i zalogowanie się w celu przeglądania zawartości
 - zabezpieczenia w postaci captcha
 - interaktywne (rozwijane) menu
-- np. [glassdoor.com](http://glassdoor.com) czy portale społecznościowe
+- np. [Glassdoor](http://glassdoor.com/), [Meetup](http://www.meetup.com/) czy portale społecznościowe
 
 ## Problem z logowaniem
 
@@ -83,16 +75,14 @@ library(htmltools)
 - [Vinagre](http://wiki.gnome.org/Apps/Vinagre) - program do uruchamiania zdalnego pulpitu
 - Selenium wspiera Firefox, IE, Safari, Opera, Chrome niezależnie od systemu operacyjnego
 
-## <br>Czym jest Selenium?
+## <br><br>Czym jest Selenium?
 
 Zestaw narzędzi do międzyplatformowego zautomatyzowanego testowania aplikacji internetowych i czynności związanych z przeglądarkami.
 
 W skład pakietu wchodzą:
 
 - Selenium IDE (Integrated Development Environment)
-- Selenium Remote Control
 - Selenium WebDriver
-- Selenium Grid
 
 ## Jak to działa?
 
@@ -100,18 +90,20 @@ W skład pakietu wchodzą:
 
 Uruchomienie kontenera Docker
 
-```{bash echo = TRUE}
+```{bash}
 sudo docker run -d -p 5901:5900 \
--p 127.0.0.1:4445:4444 \
---name selenium_server \
-selenium/standalone-firefox-debug:2.53.1
+    -p 127.0.0.1:4445:4444 \
+    --name selenium_server \
+    selenium/standalone-firefox-debug:2.53.1
 ```
 
 ## Programowanie obiektowe {.smallCode}
 
-```{r eval = TRUE, echo = TRUE}
+```{r eval = TRUE}
 library(RSelenium)
-remDr <- RSelenium::remoteDriver(port = 4445L)
+remDr <- RSelenium::remoteDriver(remoteServerAddr = "localhost",
+                                 port = 4445L,
+                                 browserName = "firefox")
 
 # Obiekt bazowy?
 !base::is.object(remDr)
@@ -136,8 +128,10 @@ remDr$open(silent = TRUE)
 
 ## <br>Podstawowe operacje
 
-```{r echo = TRUE}
-# Przejście do strony, powrót na poprzednią, odświeżenie, pozyskanie adresu
+```{r}
+# Otwarcie przeglądarki, przejście do strony, powrót na poprzednią, odświeżenie,
+# pozyskanie adresu
+remDr$open()
 remDr$navigate(url)
 remDr$goBack()
 remDr$goForward()
