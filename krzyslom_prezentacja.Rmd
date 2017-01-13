@@ -1,6 +1,6 @@
 ---
 title: "<br><br>RSelenium jako alternatywa dla rvest podczas web-srcapingu"
-author: "<br>Krzysztof Słomczyński<br><small><a href='http://www.linkedin.com/in/krzysztof-s%C5%82omczy%C5%84ski-20a364134?trk=hp-identity-name' target='_blank'><i class='fa fa-linkedin'></i>&nbsp;&nbsp;<a href='http://github.com/krzyslom' target='_blank'><i class='fa fa-github'></i></a>&nbsp;&nbsp;<a href='http://stackoverflow.com/users/6295945/krzyslom' target='_blank'><i class='fa fa-stack-overflow'></i></a>&nbsp;&nbsp;<a href='mailto:krzysztofslomczynski@gmail.com'><i class='fa fa-envelope-o'></i></a></small><br>"
+author: "<br>Krzysztof Słomczyński<br><small><a href='http://www.linkedin.com/in/krzysztof-słomczyński-20a364134' target='_blank'><i class='fa fa-linkedin'></i>&nbsp;&nbsp;<a href='http://github.com/krzyslom' target='_blank'><i class='fa fa-github'></i></a>&nbsp;&nbsp;<a href='http://stackoverflow.com/users/6295945/krzyslom' target='_blank'><i class='fa fa-stack-overflow'></i></a>&nbsp;&nbsp;<a href='mailto:krzysztofslomczynski@gmail.com'><i class='fa fa-envelope-o'></i></a></small><br>"
 date: "<small>12 stycznia 2016</small>"
 output:
   revealjs::revealjs_presentation:
